@@ -1,0 +1,17 @@
+{
+  "idaasInstanceId": "idaas_xxx",
+  "clientId": "app_xxx",
+  "issuer": "https://your-instance.aliyunidaas.com/api/v2/iauths_system/oauth2",
+  "tokenEndpoint": "https://your-instance.aliyunidaas.com/api/v2/iauths_system/oauth2/token",
+  "scope": "api.example.com|read api.example.com|write",
+  "openApiEndpoint": "eiam.cn-hangzhou.aliyuncs.com",
+  "authnConfiguration": {
+    "identityType": "CLIENT",
+    "authnMethod": "PLUGIN",
+    "pluginName": "alibabacloudPluginCredentialProvider"
+  },
+  "httpConfiguration": {
+    "connectTimeout": 5000,
+    "readTimeout": 10000
+  }
+}
