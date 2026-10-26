@@ -6,7 +6,7 @@ require (
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.2.4
 	github.com/alibabacloud-go/eiam-20211201/v2 v2.19.1
 	github.com/alibabacloud-go/tea v1.5.2
-	github.com/aliyun/credentials-go v1.4.5
+	github.com/aliyun/credentials-go v1.4.13
 	github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-beta.1
 )
 
