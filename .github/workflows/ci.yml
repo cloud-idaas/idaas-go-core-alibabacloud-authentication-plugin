@@ -21,7 +21,7 @@ jobs:
           path: plugin
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: ${{ matrix.go-version }}
           cache-dependency-path: plugin/go.sum
@@ -51,7 +51,7 @@ jobs:
           path: plugin
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: stable
           cache-dependency-path: plugin/go.sum
