@@ -1,3 +1,17 @@
+// Copyright 2026 Alibaba Cloud
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package alibabacloud
 
 import (
@@ -56,8 +70,18 @@ func TestReadmeConfigurationsUseGoPluginMethod(t *testing.T) {
 			if err := json.Unmarshal([]byte(strings.SplitN(section[1], "\n```", 2)[0]), &cfg); err != nil {
 				t.Fatal(err)
 			}
+			// README examples intentionally use a bare openApiEndpoint host.
+			// In production, factory.Initialize normalizes endpoints (a bare
+			// host defaults to https://) before validating, so the config
+			// package docs require callers to run NormalizeEndpoints() before
+			// Validate as well. Mirror that Load -> Normalize -> Validate
+			// pipeline here.
+			cfg.NormalizeEndpoints()
 			if err := config.NewConfigValidator().Validate(&cfg); err != nil {
 				t.Fatalf("README configuration is invalid: %v", err)
+			}
+			if _, err := parseAndValidateEndpoint(cfg.OpenApiEndpoint); err != nil {
+				t.Fatalf("README endpoint rejected by plugin: %v", err)
 			}
 			if cfg.AuthnConfiguration.AuthnMethod != enums.TokenAuthnMethodPlugin ||
 				cfg.AuthnConfiguration.PluginName != PluginName {

@@ -1,9 +1,9 @@
 # idaas-go-core-alibabacloud-authentication-plugin
 
 [![CI](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/actions/workflows/ci.yml)
-[![Go Version](https://img.shields.io/badge/go-1.21%2B-blue)](https://go.dev/)
+[![Go Version](https://img.shields.io/badge/go-1.18%2B-blue)](https://go.dev/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
-[![Development Status](https://img.shields.io/badge/status-Alpha-orange)](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin)
+[![Development Status](https://img.shields.io/badge/status-Beta-yellow)](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin)
 
 [English](README.md) | 简体中文
 
@@ -35,7 +35,9 @@ EIAM `GenerateOauthToken`。
 
 ## 环境要求
 
-- Go 1.21 及以上
+- Go 1.18 及以上，与
+  [`idaas-go-core-sdk`](https://github.com/cloud-idaas/idaas-go-core-sdk) 声明的最低版本一致。
+  注：Go 1.18 上游已停止维护，仅作为 CI 验证的兼容下限；新部署建议使用受支持的 Go 版本
 - credentials-go 支持的阿里云凭证
   （环境变量、实例 RAM 角色等）
 - 已授权目标 Scope 的 IDaaS EIAM 应用
@@ -44,7 +46,7 @@ EIAM `GenerateOauthToken`。
 
 | 模块 | 最低版本 |
 |---|---|
-| [`idaas-go-core-sdk`](https://github.com/cloud-idaas/idaas-go-core-sdk) | v0.1.0-alpha.3 |
+| [`idaas-go-core-sdk`](https://github.com/cloud-idaas/idaas-go-core-sdk) | v0.1.0-beta.1 |
 | [`alibabacloud-go/eiam-20211201/v2`](https://github.com/alibabacloud-go/eiam-20211201) | v2.15.9 |
 | [`credentials-go`](https://github.com/aliyun/credentials-go) | v1.4.5 |
 
@@ -70,7 +72,7 @@ go get github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin
   "openApiEndpoint": "eiam.cn-hangzhou.aliyuncs.com",
   "authnConfiguration": {
     "identityType": "CLIENT",
-    "authnMethod": "plugin",
+    "authnMethod": "PLUGIN",
     "pluginName": "alibabacloudPluginCredentialProvider"
   },
   "httpConfiguration": {
@@ -87,9 +89,9 @@ go get github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin
 | idaasInstanceId | 是 | IDaaS EIAM 实例 ID |
 | clientId | 是 | IDaaS 应用 ID |
 | scope | 是 | 一个或多个 `audience\|scopeValue` 对（最长 4096 字符，最多 100 个值，单一 audience） |
-| openApiEndpoint | 是 | 官方 EIAM Endpoint（`eiam.<region>.aliyuncs.com` 或 `eiam-vpc.<region>.aliyuncs.com`） |
+| openApiEndpoint | 是 | 官方 EIAM Endpoint（`eiam.<region>.aliyuncs.com` 或 `eiam-vpc.<region>.aliyuncs.com`）。可直接写裸 host，运行时自动补全为 `https://`；显式 scheme 时仅允许 `https` |
 | identityType | 是 | 必须为 `CLIENT` |
-| authnMethod | 是 | 必须为 `plugin`（Go Core SDK 枚举值） |
+| authnMethod | 是 | 必须为 `plugin`（Go Core SDK 枚举值，大小写不敏感） |
 | pluginName | 是 | 必须为 `alibabacloudPluginCredentialProvider` |
 
 ### Core SDK 共享字段
@@ -187,7 +189,7 @@ EIAM API 返回 HTTP 错误时，按以下方式分类：
 |---|---|
 | 500+ | ServerError |
 | 400–499 | ClientError |
-| 其他 | HttpError |
+| 其他（`0` 表示无 HTTP 响应的传输失败，如连接超时、DNS 解析失败） | HttpError |
 
 ## 开发验证
 
@@ -197,13 +199,16 @@ go vet ./...
 go test -race -cover ./...
 ```
 
+针对真实 EIAM API 的集成测试，参见[集成测试指南](INTEGRATION_TEST_zh.md)。
+
 参见 [CONTRIBUTING.md](CONTRIBUTING.md)、[SECURITY.md](SECURITY.md) 和
 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 支持与反馈
 
-- **邮箱**：cloudidaas@list.alibaba-inc.com
-- **问题反馈**：如有疑问或建议，请在仓库提交 Issue。
+- **问题反馈**：如有疑问或建议，请在
+  [GitHub Issue](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/issues) 提交。
+- **安全漏洞**：请参阅 [SECURITY.md](SECURITY.md)，请勿公开提 Issue。
 
 ## 许可证
 

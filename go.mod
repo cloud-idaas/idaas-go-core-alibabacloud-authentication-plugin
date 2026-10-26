@@ -1,13 +1,13 @@
 module github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin
 
-go 1.21
+go 1.18
 
 require (
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.14
 	github.com/alibabacloud-go/eiam-20211201/v2 v2.15.9
 	github.com/alibabacloud-go/tea v1.3.13
 	github.com/aliyun/credentials-go v1.4.5
-	github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-alpha.3
+	github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-beta.1
 )
 
 require (

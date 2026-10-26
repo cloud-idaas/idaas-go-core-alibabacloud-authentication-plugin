@@ -4,8 +4,9 @@ Thank you for contributing.
 
 ## Development
 
-Use Go 1.21 or later. Dependencies are resolved from their published Go
-modules.
+This module supports Go 1.18 or later; newer toolchains are recommended
+for development. Dependencies are resolved from their published Go modules.
+CI verifies the 1.18 floor.
 
 Before submitting a change, run:
 

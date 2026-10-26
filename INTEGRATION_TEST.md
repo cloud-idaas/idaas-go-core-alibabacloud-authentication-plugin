@@ -1,26 +1,33 @@
-# 集成测试指南
+# Integration Test Guide
 
-## 前置条件
+> 本文档的中文版见 [INTEGRATION_TEST_zh.md](INTEGRATION_TEST_zh.md)。
 
-### 1. 配置阿里云凭证
+Integration tests exercise the plugin against the real Alibaba Cloud EIAM
+`GenerateOauthToken` API. They are guarded by the `integration` build tag and
+are skipped unless credentials and a configuration file are provided.
 
-设置环境变量（必须）：
+## Prerequisites
+
+### 1. Alibaba Cloud credentials
+
+Export the credentials used by the Alibaba Cloud default credential chain
+(required):
 
 ```bash
-export ALIBABA_CLOUD_ACCESS_KEY_ID='你的AK'
-export ALIBABA_CLOUD_ACCESS_KEY_SECRET='你的SK'
+export ALIBABA_CLOUD_ACCESS_KEY_ID='<your AK>'
+export ALIBABA_CLOUD_ACCESS_KEY_SECRET='<your SK>'
 ```
 
-### 2. 准备 IDaaS 配置文件
+### 2. IDaaS configuration file
 
-复制模板并编辑：
+Copy the template and edit it:
 
 ```bash
 cp config/integration-config.json.template config/integration-config.json
 vim config/integration-config.json
 ```
 
-配置文件示例：
+Example configuration:
 
 ```json
 {
@@ -42,72 +49,73 @@ vim config/integration-config.json
 }
 ```
 
-**配置字段说明：**
-
-| 字段 | 必填 | 说明 |
+| Field | Required | Description |
 |------|------|------|
-| idaasInstanceId | ✓ | IDaaS 实例 ID |
-| clientId | ✓ | 应用 ID |
-| issuer | ✓ | OAuth2 issuer 端点 |
-| tokenEndpoint | ✓ | OAuth2 token 端点 |
-| scope | ✓ | 权限范围（格式：`audience\|scopeValue`） |
-| openApiEndpoint | ✓ | EIAM OpenAPI 端点 |
+| idaasInstanceId | ✓ | IDaaS instance ID |
+| clientId | ✓ | Application ID |
+| issuer | ✓ | OAuth2 issuer endpoint |
+| tokenEndpoint | ✓ | OAuth2 token endpoint |
+| scope | ✓ | Grant scope (format: `audience\|scopeValue`) |
+| openApiEndpoint | ✓ | EIAM OpenAPI endpoint (a bare host is accepted and normalized to `https://` at runtime) |
+| authnMethod | ✓ | Authentication method, case-insensitive. The IDaaS configuration API returns the uppercase form `PLUGIN`; the canonical Core SDK enum value is lowercase `plugin` |
+| pluginName | ✓ | Must be `alibabacloudPluginCredentialProvider`; with any other value the Core SDK cannot resolve this plugin |
+| httpConfiguration.connectTimeout / readTimeout | ✗ | Optional, in milliseconds; valid range 2000-60000, `0` inherits the default |
 
-## 运行集成测试
+## Running the tests
 
-### 方式 1：使用运行脚本（推荐）
+### Option 1: helper script (recommended)
 
 ```bash
 ./run_integration_test.sh
 ```
 
-或指定配置文件：
+Or with an explicit config path:
 
 ```bash
 ./run_integration_test.sh config/integration-config.json
 ```
 
-### 方式 2：直接运行 go test
+### Option 2: plain `go test`
 
 ```bash
 go test -v -tags=integration -run TestIntegration
 ```
 
-## 测试用例
+## Test cases
 
 ### 1. TestIntegration_GetIDaaSCredential_RealAPI
 
-调用真实的阿里云 EIAM API 获取 token，验证：
-- 能够成功获取 access token
-- token 类型正确
-- 过期时间有效
+Calls the real EIAM API to obtain a token and verifies:
+- an access token is returned
+- the token type is correct
+- the expiry is valid
 
 ### 2. TestIntegration_GetIDaaSCredential_InvalidCredentials
 
-使用无效凭证调用 API，验证：
-- 正确返回错误
-- 错误信息清晰
+Calls the API with invalid credentials and verifies:
+- an error is returned
+- the error message is clear
 
-## 常见问题
+## Troubleshooting
 
-### Q: 提示"环境变量未设置"
-A: 确保已设置 `ALIBABA_CLOUD_ACCESS_KEY_ID` 和 `ALIBABA_CLOUD_ACCESS_KEY_SECRET`
+### "Alibaba Cloud credentials are not set"
+Set `ALIBABA_CLOUD_ACCESS_KEY_ID` and `ALIBABA_CLOUD_ACCESS_KEY_SECRET`.
 
-### Q: 提示"配置文件不存在"
-A: 先复制模板：`cp config/integration-config.json.template config/integration-config.json`
+### "config file not found"
+Copy the template first:
+`cp config/integration-config.json.template config/integration-config.json`
 
-### Q: 测试失败，返回认证错误
-A: 检查：
-1. AK/SK 是否正确
-2. IDaaS 实例 ID 是否正确
-3. 应用是否已授权对应的 scope
-4. 网络是否可以访问 EIAM OpenAPI 端点
+### Authentication errors in the test run
+Check:
+1. the AK/SK pair is valid
+2. the IDaaS instance ID is correct
+3. the application is granted the requested scopes
+4. the network can reach the EIAM OpenAPI endpoint
 
-## 安全提示
+## Security notes
 
-⚠️ **重要**：
-- 不要将 AK/SK 提交到代码仓库
-- 不要将包含真实配置的文件提交到 Git
-- 使用 `.gitignore` 忽略 `config/integration-config.json`
-- 测试完成后及时清理环境变量
-
+⚠️ **Important**:
+- Never commit AK/SK to the repository
+- Never commit a config file containing real values; `config/integration-config.json`
+  is gitignored on purpose
+- Clear the credential environment variables after the run

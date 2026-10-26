@@ -8,8 +8,8 @@ development branch is not a supported release until a version is published.
 ## Reporting a vulnerability
 
 Please use
-[GitHub private vulnerability reporting](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/security/advisories/new)
-or email `cloudidaas@list.alibaba-inc.com`. Do not open a public issue and do
+[GitHub private vulnerability reporting](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/security/advisories/new).
+Do not open a public issue and do
 not include credentials, access tokens, personal data, or production
 configuration in a report.
 

@@ -50,8 +50,8 @@ github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA
 github.com/clbanning/mxj/v2 v2.7.0 h1:WA/La7UGCanFe5NpHF0Q3DNtnCsVoxbPKuyBNHWRyME=
 github.com/clbanning/mxj/v2 v2.7.0/go.mod h1:hNiWqW14h+kc+MdF9C6/YoRfjEJoR3ou6tn/Qo+ve2s=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-alpha.3 h1:WEYnci9i12+IOEIitz+eu9FWNLExlVIjZVx13eERi0s=
-github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-alpha.3/go.mod h1:zRjOWqOAcloup46Lu/G3znCDpruY3Y28Js/8y2EGF6M=
+github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-beta.1 h1:JejCoPLlrPHqJx2BIMsFgiZzZlYUfxQs54TurH58KWw=
+github.com/cloud-idaas/idaas-go-core-sdk v0.1.0-beta.1/go.mod h1:zRjOWqOAcloup46Lu/G3znCDpruY3Y28Js/8y2EGF6M=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

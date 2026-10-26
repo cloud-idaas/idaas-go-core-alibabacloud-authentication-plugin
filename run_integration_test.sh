@@ -2,53 +2,54 @@
 set -e
 
 echo "=========================================="
-echo "  IDaaS 集成测试运行脚本"
+echo "  IDaaS Integration Test Runner"
 echo "=========================================="
 echo ""
 
-# 检查阿里云凭证
+# Check Alibaba Cloud credentials
 if [ -z "$ALIBABA_CLOUD_ACCESS_KEY_ID" ] || [ -z "$ALIBABA_CLOUD_ACCESS_KEY_SECRET" ]; then
-    echo "错误: 阿里云凭证未设置"
+    echo "Error: Alibaba Cloud credentials are not set"
     echo ""
-    echo "请先设置环境变量:"
-    echo "  export ALIBABA_CLOUD_ACCESS_KEY_ID='你的AK'"
-    echo "  export ALIBABA_CLOUD_ACCESS_KEY_SECRET='你的SK'"
+    echo "Export them first:"
+    echo "  export ALIBABA_CLOUD_ACCESS_KEY_ID='<your AK>'"
+    echo "  export ALIBABA_CLOUD_ACCESS_KEY_SECRET='<your SK>'"
     echo ""
     exit 1
 fi
 
-echo "✓ 阿里云凭证已设置"
+echo "OK: Alibaba Cloud credentials are set"
 
-# 配置文件路径
+# Configuration file path
 CONFIG_FILE=${1:-"config/integration-config.json"}
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo "错误: 配置文件不存在: $CONFIG_FILE"
+    echo "Error: config file not found: $CONFIG_FILE"
     echo ""
-    echo "请先创建配置文件:"
-    echo "  1. 复制模板: cp config/integration-config.json.template config/integration-config.json"
-    echo "  2. 编辑配置: vim config/integration-config.json"
+    echo "Create it first:"
+    echo "  1. Copy the template: cp config/integration-config.json.template config/integration-config.json"
+    echo "  2. Edit the values:   vim config/integration-config.json"
     echo ""
     exit 1
 fi
 
-echo "✓ 配置文件: $CONFIG_FILE"
+echo "OK: config file: $CONFIG_FILE"
 echo ""
 
-# 显示配置信息
-echo "配置信息:"
+# Show non-sensitive configuration summary
+echo "Configuration summary:"
 if command -v jq &> /dev/null; then
     echo "  Instance ID: $(jq -r '.idaasInstanceId' "$CONFIG_FILE")"
-    echo "  Client ID: $(jq -r '.clientId' "$CONFIG_FILE")"
-    echo "  Scope: $(jq -r '.scope' "$CONFIG_FILE")"
-    echo "  Endpoint: $(jq -r '.openApiEndpoint' "$CONFIG_FILE")"
+    echo "  Client ID:   $(jq -r '.clientId' "$CONFIG_FILE")"
+    echo "  Scope:       $(jq -r '.scope' "$CONFIG_FILE")"
+    echo "  Endpoint:    $(jq -r '.openApiEndpoint' "$CONFIG_FILE")"
 else
-    echo "  (安装 jq 可以显示格式化的配置信息)"
+    echo "  (install jq for a formatted summary; falling back to raw fields)"
+    grep -E '"(idaasInstanceId|clientId|scope|openApiEndpoint)"' "$CONFIG_FILE" || true
 fi
 echo ""
 
 echo "=========================================="
-echo "  开始运行集成测试"
+echo "  Running integration tests"
 echo "=========================================="
 echo ""
 
@@ -56,5 +57,5 @@ go test -v -tags=integration -run TestIntegration
 
 echo ""
 echo "=========================================="
-echo "  集成测试完成"
+echo "  Integration tests finished"
 echo "=========================================="

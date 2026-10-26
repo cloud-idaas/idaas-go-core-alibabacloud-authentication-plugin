@@ -1,9 +1,9 @@
 # idaas-go-core-alibabacloud-authentication-plugin
 
 [![CI](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/actions/workflows/ci.yml)
-[![Go Version](https://img.shields.io/badge/go-1.21%2B-blue)](https://go.dev/)
+[![Go Version](https://img.shields.io/badge/go-1.18%2B-blue)](https://go.dev/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
-[![Development Status](https://img.shields.io/badge/status-Alpha-orange)](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin)
+[![Development Status](https://img.shields.io/badge/status-Beta-yellow)](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin)
 
 [简体中文](README_zh.md) | English
 
@@ -41,7 +41,10 @@ this plugin obtains the Alibaba Cloud credential and calls EIAM
 
 ## Requirements
 
-- Go 1.21 or later
+- Go 1.18 or later, matching the minimum version declared by
+  [`idaas-go-core-sdk`](https://github.com/cloud-idaas/idaas-go-core-sdk).
+  Note: Go 1.18 is end-of-life upstream and only used as the compatibility
+  floor verified by CI; prefer a supported Go release for new deployments
 - An Alibaba Cloud credential accepted by
   [credentials-go](https://github.com/aliyun/credentials-go)
   (environment variables, instance RAM role, etc.)
@@ -51,7 +54,7 @@ this plugin obtains the Alibaba Cloud credential and calls EIAM
 
 | Module | Minimum version |
 |---|---|
-| [`idaas-go-core-sdk`](https://github.com/cloud-idaas/idaas-go-core-sdk) | v0.1.0-alpha.3 |
+| [`idaas-go-core-sdk`](https://github.com/cloud-idaas/idaas-go-core-sdk) | v0.1.0-beta.1 |
 | [`alibabacloud-go/eiam-20211201/v2`](https://github.com/alibabacloud-go/eiam-20211201) | v2.15.9 |
 | [`credentials-go`](https://github.com/aliyun/credentials-go) | v1.4.5 |
 
@@ -78,7 +81,7 @@ Create `~/.cloud_idaas/client-config.json`:
   "openApiEndpoint": "eiam.cn-hangzhou.aliyuncs.com",
   "authnConfiguration": {
     "identityType": "CLIENT",
-    "authnMethod": "plugin",
+    "authnMethod": "PLUGIN",
     "pluginName": "alibabacloudPluginCredentialProvider"
   },
   "httpConfiguration": {
@@ -95,9 +98,9 @@ Create `~/.cloud_idaas/client-config.json`:
 | idaasInstanceId | Yes | IDaaS EIAM instance ID |
 | clientId | Yes | IDaaS application ID |
 | scope | Yes | One or more `audience\|scopeValue` pairs (max 4096 chars, 100 values, single audience) |
-| openApiEndpoint | Yes | Official EIAM endpoint (`eiam.<region>.aliyuncs.com` or `eiam-vpc.<region>.aliyuncs.com`) |
+| openApiEndpoint | Yes | Official EIAM endpoint (`eiam.<region>.aliyuncs.com` or `eiam-vpc.<region>.aliyuncs.com`). A bare host is accepted and normalized to `https://` at runtime; an explicit scheme must be `https` |
 | identityType | Yes | Must be `CLIENT` |
-| authnMethod | Yes | Must be `plugin` (the Go Core SDK enum value) |
+| authnMethod | Yes | Must be `PLUGIN` (the Go Core SDK enum value, case-insensitive) |
 | pluginName | Yes | Must be `alibabacloudPluginCredentialProvider` |
 
 ### Core SDK shared fields
@@ -196,7 +199,7 @@ When the EIAM API returns an HTTP error, it is classified as follows:
 |---|---|
 | 500+ | ServerError |
 | 400–499 | ClientError |
-| Other | HttpError |
+| Other (`0` = transport failure without an HTTP response, e.g. connect timeout or DNS error) | HttpError |
 
 ## Development
 
@@ -206,14 +209,19 @@ go vet ./...
 go test -race -cover ./...
 ```
 
+Integration tests against the real EIAM API: see
+[INTEGRATION_TEST.md](INTEGRATION_TEST.md).
+
 See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and
 [CHANGELOG.md](CHANGELOG.md).
 
 ## Support and feedback
 
-- **Email**: cloudidaas@list.alibaba-inc.com
-- **Issues**: Please submit an issue on the repository for questions or
-  suggestions.
+- **Issues**: Please open a
+  [GitHub issue](https://github.com/cloud-idaas/idaas-go-core-alibabacloud-authentication-plugin/issues)
+  for questions or suggestions.
+- **Security vulnerabilities**: see [SECURITY.md](SECURITY.md) — please do not
+  open a public issue.
 
 ## License
 
